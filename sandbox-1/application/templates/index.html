@@ -1,0 +1,46 @@
+<!doctype html>
+<head>
+    <title>Sandbox-1</title>
+    <script lang="js">
+        const asyncTimeout = (ms) => {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        const FetchFromSandbox1 = async () => {
+            await asyncTimeout(1000);
+            const outputText = document.getElementById('sandbox-1-response');
+            outputText.innerText = "Fetching text";
+            try {
+                const response = await fetch('/sandbox-1');
+                const body = await response.json();
+                outputText.innerText = `received ${body.output}`;
+            } catch (e) {
+                console.error(e);
+                outputText.innerText = "Failed to receive text";
+            }
+        }
+        const FetchFromSandbox2 = async () => {
+            const outputText = document.getElementById('sandbox-2-response');
+            outputText.innerText = "About to send request";
+            await asyncTimeout(1000);
+            outputText.innerText = "Fetching text";
+            try {
+                const response = await fetch('/sandbox-2');
+                const body = await response.json();
+                outputText.innerText = `received ${body.output}`;
+            } catch (e) {
+                console.error(e);
+                outputText.innerText = "Failed to receive text";
+            }
+        }
+        document.addEventListener("DOMContentLoaded", async () => {
+            await FetchFromSandbox1();
+            await asyncTimeout(1000);
+            await FetchFromSandbox2();
+        });
+    </script>
+</head>
+<body>
+    <h1>Hello, world</h1>
+    <p>Sandbox-1: <span id="sandbox-1-response">About to send request</span></p>
+    <p>Sandbox-2: <span id="sandbox-2-response">Waiting to send request</span></p>
+</body>
